@@ -15,13 +15,13 @@
         body {
             background: radial-gradient(circle at center, #1b2735 0%, var(--bg) 100%);
             color: white;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         /* --- AUTH OVERLAY --- */
@@ -43,6 +43,8 @@
             border-radius: 24px;
             border: 1px solid var(--neon-blue);
             backdrop-filter: blur(20px);
+            width: 320px;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
         }
 
         #github-btn {
@@ -55,9 +57,11 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 12px;
             transition: 0.3s;
             margin-top: 20px;
+            width: 100%;
         }
 
         #github-btn:hover {
@@ -65,7 +69,7 @@
             transform: translateY(-2px);
         }
 
-        /* --- MAIN APP (Hidden by default) --- */
+        /* --- MAIN APP CONTENT --- */
         #app-content {
             display: none;
             width: 90%;
@@ -76,6 +80,7 @@
             border-radius: 30px;
             border: 1px solid rgba(255,255,255,0.1);
             text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
         .countdown-grid {
@@ -92,7 +97,8 @@
             border-bottom: 4px solid var(--neon-blue);
         }
 
-        .box span { font-size: 3rem; font-weight: 800; color: var(--neon-blue); }
+        .box span { font-size: 3rem; font-weight: 800; color: var(--neon-blue); text-shadow: 0 0 10px rgba(0,210,255,0.5); }
+        .box p { margin: 5px 0 0; font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
 
         .controls {
             display: grid;
@@ -116,15 +122,21 @@
             border: 1px solid #333;
             border-radius: 8px;
             margin-top: 10px;
+            cursor: pointer;
+            outline: none;
         }
+
+        select:focus { border-color: var(--neon-blue); }
 
         .live-label { color: var(--neon-pink); font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; gap: 8px; }
         .dot { width: 8px; height: 8px; background: red; border-radius: 50%; animation: blink 1s infinite; }
 
         @keyframes blink { 50% { opacity: 0; } }
+
         @media (max-width: 700px) { 
             .countdown-grid { grid-template-columns: repeat(2, 1fr); }
             .controls { grid-template-columns: 1fr; }
+            #app-content { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -132,8 +144,8 @@
 
     <div id="auth-overlay">
         <div class="login-card">
-            <h2 style="margin-top:0">Restricted Access</h2>
-            <p style="color:#888">Login with GitHub to unlock the Global Countdown</p>
+            <h2 style="margin-top:0">Private Access</h2>
+            <p style="color:#888; font-size: 0.9rem;">Please sign in with GitHub to unlock the Jan 25 Countdown.</p>
             <button id="github-btn">
                 <svg height="24" width="24" viewBox="0 0 16 16" fill="white"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
                 Sign in with GitHub
@@ -142,8 +154,8 @@
     </div>
 
     <div id="app-content">
-        <h1 id="user-welcome">Welcome</h1>
-        <p style="letter-spacing: 5px; color: #666;">COUNTDOWN TO JAN 25</p>
+        <h1 id="user-welcome" style="margin-bottom: 5px;">Welcome</h1>
+        <p style="letter-spacing: 5px; color: #666; font-size: 0.8rem; margin-bottom: 30px;">GLOBAL EVENT: JANUARY 25</p>
 
         <div class="countdown-grid">
             <div class="box"><span id="days">00</span><p>Days</p></div>
@@ -154,48 +166,59 @@
 
         <div class="controls">
             <div class="panel">
-                <label style="color:#888; font-size: 0.8rem;">WORLD CLOCK EXPLORER</label>
+                <label style="color:#888; font-size: 0.75rem; text-transform: uppercase;">Timezone Explorer</label>
                 <select id="tz-selector"></select>
-                <div id="local-time" style="font-size: 2rem; margin-top:10px; font-family: monospace;">00:00:00</div>
+                <div id="local-time" style="font-size: 2.2rem; margin-top:15px; font-family: 'Courier New', monospace; color: var(--neon-blue);">00:00:00</div>
+                <div id="local-date" style="font-size: 0.8rem; color: #666; margin-top: 5px;">---</div>
             </div>
 
             <div class="panel">
-                <div class="live-label"><div class="dot"></div> LIVE RADIO</div>
+                <div class="live-label"><div class="dot"></div> LIVE RADIO STATIONS</div>
                 <select id="radio-selector">
                     <option value="https://kut.streamguys1.com/kutx-free">KUTX 98.9 Austin (Texas)</option>
                     <option value="https://kase.stream.iheart.com/stream">KASE 101 Country (Texas)</option>
                     <option value="https://jenny.torontocast.com:2000/stream/J1HITS">J1 HITS (Tokyo)</option>
-                    <option value="https://ice2.somafm.com/groovesalad-128-mp3">Groove Salad (Chill)</option>
+                    <option value="https://ice2.somafm.com/groovesalad-128-mp3">Groove Salad (Chillout)</option>
+                    <option value="https://ice-the.musicradio.com/Capital">Capital FM (UK Hits)</option>
                 </select>
-                <audio id="audio-player" controls style="width:100%; margin-top:15px; filter: invert(1);"></audio>
+                <audio id="audio-player" controls style="width:100%; margin-top:20px; filter: invert(1); height: 35px;"></audio>
             </div>
         </div>
-        <button onclick="logout()" style="margin-top:30px; background:none; border:none; color:#555; cursor:pointer; text-decoration:underline;">Logout</button>
+
+        <button onclick="logout()" style="margin-top:40px; background:none; border:none; color:#444; cursor:pointer; text-decoration:underline; font-size: 0.8rem;">Secure Logout</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GithubAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // --- 1. CONFIGURATION (REPLACE WITH YOUR OWN) ---
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            projectId: "YOUR_PROJECT",
-            appId: "YOUR_APP_ID"
-        };
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAylgVg99dQlMvA5yj8bmqqEnQhxEWWVcM",
+  authDomain: "countdown-timer-f4ba6.firebaseapp.com",
+  projectId: "countdown-timer-f4ba6",
+  storageBucket: "countdown-timer-f4ba6.firebasestorage.app",
+  messagingSenderId: "883817737518",
+  appId: "1:883817737518:web:141fd485a7775c8b3bdebf",
+  measurementId: "G-9ZD9WLJ7B7"
+};
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth();
         const provider = new GithubAuthProvider();
 
-        // --- 2. AUTHENTICATION LOGIC ---
+        // --- 2. AUTHENTICATION ---
         const loginBtn = document.getElementById('github-btn');
         const authOverlay = document.getElementById('auth-overlay');
         const appContent = document.getElementById('app-content');
 
-        loginBtn.onclick = () => {
-            signInWithPopup(auth, provider).catch(err => alert("Error: " + err.message));
+        loginBtn.onclick = async () => {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (err) {
+                console.error("Auth Error:", err);
+                alert("Login failed: " + err.message);
+            }
         };
 
         window.logout = () => signOut(auth);
@@ -212,17 +235,20 @@
             }
         });
 
-        // --- 3. COUNTDOWN & RADIO LOGIC ---
+        // --- 3. APP LOGIC ---
         function initApp() {
+            // Target Date: Jan 25, 2026 UTC
             const target = new Date(Date.UTC(2026, 0, 25, 0, 0, 0)).getTime();
             
             // Populate Timezones
             const tzSelector = document.getElementById('tz-selector');
             if (tzSelector.options.length === 0) {
-                Intl.supportedValuesOf('timeZone').forEach(zone => {
+                const zones = Intl.supportedValuesOf('timeZone');
+                zones.forEach(zone => {
                     const opt = document.createElement('option');
                     opt.value = zone;
-                    opt.textContent = zone.replace(/_/g, ' ');
+                    opt.textContent = zone.replace(/_/g, ' ').replace(/\//g, ' - ');
+                    // Default to Texas time
                     if(zone === 'America/Chicago') opt.selected = true;
                     tzSelector.appendChild(opt);
                 });
@@ -231,26 +257,37 @@
             // Radio Logic
             const audio = document.getElementById('audio-player');
             const radioSel = document.getElementById('radio-selector');
-            radioSel.onchange = () => { audio.src = radioSel.value; audio.play(); };
+            radioSel.onchange = () => {
+                audio.src = radioSel.value;
+                audio.play();
+            };
             if(!audio.src) audio.src = radioSel.value;
 
-            // Update Loop
-            setInterval(() => {
+            // Update Loop (Runs every second)
+            function tick() {
                 const now = new Date();
                 const diff = target - now.getTime();
 
-                // Countdown
+                // Countdown Numbers
                 document.getElementById('days').innerText = Math.max(0, Math.floor(diff / 86400000)).toString().padStart(2,'0');
                 document.getElementById('hours').innerText = Math.max(0, Math.floor((diff % 86400000) / 3600000)).toString().padStart(2,'0');
                 document.getElementById('minutes').innerText = Math.max(0, Math.floor((diff % 3600000) / 60000)).toString().padStart(2,'0');
                 document.getElementById('seconds').innerText = Math.max(0, Math.floor((diff % 60000) / 1000)).toString().padStart(2,'0');
 
-                // World Clock
+                // World Clock Display
+                const zone = tzSelector.value;
                 document.getElementById('local-time').innerText = now.toLocaleTimeString('en-GB', { 
-                    timeZone: tzSelector.value, 
+                    timeZone: zone, 
                     hour12: false 
                 });
-            }, 1000);
+                document.getElementById('local-date').innerText = now.toLocaleDateString('en-US', { 
+                    timeZone: zone, 
+                    dateStyle: 'full' 
+                });
+            }
+
+            setInterval(tick, 1000);
+            tick();
         }
     </script>
 </body>
