@@ -180,7 +180,28 @@
                     <option value="https://jenny.torontocast.com:2000/stream/J1HITS">J1 HITS (Tokyo)</option>
                     <option value="https://ice2.somafm.com/groovesalad-128-mp3">Groove Salad (Chillout)</option>
                     <option value="https://ice-the.musicradio.com/Capital">Capital FM (UK Hits)</option>
-                    <option value="https://www.dvidshub.net/video/950168/afn-okinawa-radio-around-region-cyber-security/embed"> Okinawa AFN (Okinawa)</option>
+                    <!-- Add the following CSS to the header block of your HTML document -->
+<style>
+  .dvids-video {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  }
+  .dvids-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+</style>
+
+<!-- Add the following mark-up to the body block -->
+<div class="dvids-video">
+  <iframe src="https://www.dvidshub.net/video/950168/afn-okinawa-radio-around-region-cyber-security/embed" allowfullscreen></iframe>
+</div>   
                 </select>
                 <audio id="audio-player" controls style="width:100%; margin-top:20px; filter: invert(1); height: 35px;"></audio>
             </div>
